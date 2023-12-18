@@ -1,0 +1,14 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pytest = "==4.4.1"
+pytest-runner = "==4.4"
+build = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
