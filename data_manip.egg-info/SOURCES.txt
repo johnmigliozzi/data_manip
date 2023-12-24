@@ -4,4 +4,4 @@ data_manip.egg-info/PKG-INFO
 data_manip.egg-info/SOURCES.txt
 data_manip.egg-info/dependency_links.txt
 data_manip.egg-info/top_level.txt
-tests/test_myfunctions.py
+tests/test_data_manip.py
