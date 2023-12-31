@@ -32,59 +32,62 @@ def flatten_json(y, preserve_name=True):
 
 def prep_and_insert(data, tbl, datetime_fields=[], datetime_tz=[], date_fields=[], sub_data=[], sub_tbl=[], insert_datetime=datetime.now(timezone.utc)):
 
-    # Requires data to have a key called "id"
-    if 'id' not in data[0]:
-        print("error: id not found in data")
-        # TODO: throw error
+    # Requires data 
+    if len(data) > 0:
 
-    # datetime_fields and datetime_tz must be of same length
-    if not len(datetime_fields)==len(datetime_tz):
-        print("Error datetime_fields and datetime_tz have different lenghts")
-        # TODO: throw error
+        # Requires data to have a key called "id"
+        if 'id' not in data[0]:
+            print("error: id not found in data")
+            # TODO: throw error
 
-    # sub_data and sub_tbl must be of same length   
-    if not len(sub_data)==len(sub_tbl):
-        print("Error sub_data and sub_tbl have different lenghts")
-        # TODO: throw error
+        # datetime_fields and datetime_tz must be of same length
+        if not len(datetime_fields)==len(datetime_tz):
+            print("Error datetime_fields and datetime_tz have different lenghts")
+            # TODO: throw error
+
+        # sub_data and sub_tbl must be of same length   
+        if not len(sub_data)==len(sub_tbl):
+            print("Error sub_data and sub_tbl have different lenghts")
+            # TODO: throw error
 
 
-    # For each record in the dataset
-    for record in data:
+        # For each record in the dataset
+        for record in data:
 
-        # Process sub data
-        for [index, sd] in enumerate(sub_data):
+            # Process sub data
+            for [index, sd] in enumerate(sub_data):
 
-            sub_record = {}
+                sub_record = {}
 
-            if sd in record:
-                if type(record[sd]) == dict:
-                    sub_record[tbl.name + "_id"] = record['id']
-                    sub_record.update(record[sd])
-                    record.pop(sd)
+                if sd in record:
+                    if type(record[sd]) == dict:
+                        sub_record[tbl.name + "_id"] = record['id']
+                        sub_record.update(record[sd])
+                        record.pop(sd)
 
-            sub_row = flatten_json(sub_record)
+                sub_row = flatten_json(sub_record)
 
+                # Convert strings to datetime/date
+                sub_row = convert_strings_to_datetimes(sub_row, datetime_fields, datetime_tz, date_fields)
+
+                # Add insert_datetime
+                sub_row['insert_time_utc'] = insert_datetime
+
+                # Insert to db
+                insert_to_db(sub_row, sub_tbl[index])
+
+
+            # Flatten the data
+            row = flatten_json(record)
+            
             # Convert strings to datetime/date
-            sub_row = convert_strings_to_datetimes(sub_row, datetime_fields, datetime_tz, date_fields)
+            row = convert_strings_to_datetimes(row, datetime_fields, datetime_tz, date_fields)
 
             # Add insert_datetime
-            sub_row['insert_time_utc'] = insert_datetime
+            row['insert_time_utc'] = insert_datetime
 
             # Insert to db
-            insert_to_db(sub_row, sub_tbl[index])
-
-
-        # Flatten the data
-        row = flatten_json(record)
-        
-        # Convert strings to datetime/date
-        row = convert_strings_to_datetimes(row, datetime_fields, datetime_tz, date_fields)
-
-        # Add insert_datetime
-        row['insert_time_utc'] = insert_datetime
-
-        # Insert to db
-        insert_to_db(row, tbl)
+            insert_to_db(row, tbl)
 
     
 def convert_strings_to_datetimes(row, datetime_fields, datetime_tz, date_fields):

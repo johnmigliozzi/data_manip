@@ -50,12 +50,14 @@ def test_prep_and_insert():
     db = dataset.connect('sqlite:///:memory:') 
     tbl = db['test_prep_and_insert']
     tbl2 = db['test_metadata']
-    data =[{"id" : "12389234", "fname": "John", "spouse": {"fname": "Danielle", "score": 10}, "date": "jan 4 2023", "datetime": "2023-12-23:21:13:32", "metadata":{"label":"stuff","tag":"things","start_date":"2002-04-30"}}, {"id" : "38602849", "fname": "Danielle", "spouse": {"fname": "John", "score": 10}, "date": "2023-01-05", "datetime":"2023-12-23:21:13:32","metadata":{"label":"blah","tag":"whoa","start_date":"2002-05-01"}}]
+    data = [{"id" : "12389234", "fname": "John", "spouse": {"fname": "Danielle", "score": 10}, "date": "jan 4 2023", "datetime": "2023-12-23:21:13:32", "metadata":{"label":"stuff","tag":"things","start_date":"2002-04-30"}}, {"id" : "38602849", "fname": "Danielle", "spouse": {"fname": "John", "score": 10}, "date": "2023-01-05", "datetime":"2023-12-23:21:13:32","metadata":{"label":"blah","tag":"whoa","start_date":"2002-05-01"}}]
+    data2 = []
 
     db.query("DROP TABLE IF EXISTS test_prep_and_insert")
     db.query("DROP TABLE IF EXISTS test_metadata")
 
-    data_manip.prep_and_insert(data, tbl, datetime_fields=["datetime"], datetime_tz=["utc"], date_fields=["date"], sub_data=["metadata"], sub_tbl=[tbl2])
+    data_manip.prep_and_insert(data , tbl, datetime_fields=["datetime"], datetime_tz=["utc"], date_fields=["date"], sub_data=["metadata"], sub_tbl=[tbl2])
+    data_manip.prep_and_insert(data2, tbl, datetime_fields=["datetime"], datetime_tz=["utc"], date_fields=["date"], sub_data=["metadata"], sub_tbl=[tbl2])
 
     assert len(db['test_prep_and_insert']) == 2
     assert len(db['test_metadata']) == 2
